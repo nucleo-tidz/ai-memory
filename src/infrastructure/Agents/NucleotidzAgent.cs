@@ -1,5 +1,7 @@
 ﻿namespace infrastructure.Agents
 {
+    using System.Net.Http;
+    using System.Net.Http.Headers;
     using System.Threading.Tasks;
 
     using Microsoft.Extensions.Configuration;
@@ -7,7 +9,9 @@
     using Microsoft.SemanticKernel.Agents;
     using Microsoft.SemanticKernel.Agents.AzureAI;
     using Microsoft.SemanticKernel.ChatCompletion;
-    internal class NucleotidzAgent(Kernel _kernel, IConfiguration configuration) : AgentBase(_kernel, configuration), INucleotidzAgent
+    using Microsoft.SemanticKernel.Memory;
+
+    internal class NucleotidzAgent(Kernel _kernel, IConfiguration configuration, IHttpClientFactory httpClientFactory) : AgentBase(_kernel, configuration), INucleotidzAgent
     {
         public object responseFormat = new
         {
@@ -43,17 +47,26 @@
         };
 
 
-        public async Task<string> Execute(string input)
+        public async Task<string> Execute(string input,string userName)
         {
+            var httpClient=  httpClientFactory.CreateClient("MemoryClient");
+            var mem0Provider = new Mem0Provider(httpClient, options: new()
+            {
+                UserId = userName,
+                
+            });
             #region Update response schema if neeeded
             //await base.UpdateAgent(configuration["AgentId"], responseFormat);
             #endregion
             var agent = base.GetAzureAgent(configuration["AgentId"]);
-            AgentThread thread = new AzureAIAgentThread(agent.Item2);
+            AgentThread thread = new AzureAIAgentThread(agent.Item2);          
+
 
             #region Add Context Provider
-            // thread.AIContextProviders.Add(textSearchProvider);
+            thread.AIContextProviders.Add(mem0Provider);
             #endregion
+
+
 
             ChatMessageContent chatMessageContent = new(AuthorRole.User, input);
             string agentReply = string.Empty;

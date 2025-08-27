@@ -9,7 +9,7 @@
     {
         public async Task Start(CancellationToken cancellationToken) 
         {
-            await nucleotidzAgent.Execute(Console.ReadLine());
+            await nucleotidzAgent.Execute(Console.ReadLine(),"ahmar");
         }
     }
 }

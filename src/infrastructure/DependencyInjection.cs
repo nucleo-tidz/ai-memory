@@ -3,6 +3,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
+using Microsoft.SemanticKernel.Memory;
 
 namespace infrastructure
 {
@@ -27,6 +28,18 @@ namespace infrastructure
 
 
             }).AddTransient<INucleotidzAgent,NucleotidzAgent>();
+        }
+        public static IServiceCollection AddMemory(this IServiceCollection services, IConfiguration configuration)
+        {
+            var baseUrl = configuration["Memory:BaseUrl"] ?? "https://api.mem0.ai";
+            var token = configuration["Memory:Token"];
+                        services.AddHttpClient("MemoryClient", client =>
+            {
+                client.BaseAddress = new Uri(baseUrl);
+                client.DefaultRequestHeaders.Authorization =
+                    new System.Net.Http.Headers.AuthenticationHeaderValue("Token", token);
+            });
+            return services;
         }
     }
 }
