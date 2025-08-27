@@ -14,13 +14,14 @@
     [Experimental("Memory")]
     public class AgentController(INucleotidzAgent nucleotidz) : ControllerBase
     {
+        [HttpGet("chat/{message}/{username}/thread/{threadId}")]
         [HttpGet("chat/{message}/{username}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> Chat(string message, string username)
+        public async Task<IActionResult> Chat(string message, string username, string? threadId)
         {
             
-            //A container scheduled for dispatch has a gross weight of 9500 kg and a volume of 8.3 CBM. It is designated for a FuelSensitive route and requires special handling due to the presence of hazardous materials. Please calculate the total shipping cost using a base rate of ₹1001 per CBM.
-            var response = await nucleotidz.Execute(message,username);
+            
+            var response = await nucleotidz.Execute(message,username,threadId);
             return Ok(response);
         }        
     }

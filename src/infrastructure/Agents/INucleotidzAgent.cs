@@ -4,6 +4,6 @@
 
     public interface INucleotidzAgent
     {
-        Task<string> Execute(string input, string userName);
+        Task<string> Execute(string input, string userName, string threadId);
     }
 }
