@@ -1,8 +1,8 @@
 ﻿namespace infrastructure.Agents
 {
     using System.Net.Http;
-    using System.Net.Http.Headers;
     using System.Threading.Tasks;
+    using Azure.AI.Agents.Persistent;
 
     using Microsoft.Extensions.Configuration;
     using Microsoft.SemanticKernel;
@@ -11,7 +11,7 @@
     using Microsoft.SemanticKernel.ChatCompletion;
     using Microsoft.SemanticKernel.Memory;
 
-    internal class NucleotidzAgent(Kernel _kernel, IConfiguration configuration, IHttpClientFactory httpClientFactory) : AgentBase(_kernel, configuration), INucleotidzAgent
+    internal class NucleotidzAgent(Kernel _kernel, IConfiguration configuration, IHttpClientFactory httpClientFactory, PersistentAgentsClient agentsClient) : AgentBase(_kernel, agentsClient), INucleotidzAgent
     {
         public async Task<string> Execute(string input, string userName, string threadId)
         {
@@ -36,7 +36,6 @@
                 agentReply = agentReply + response.Content;
             }
             return agentReply;
-
         }
     }
 }

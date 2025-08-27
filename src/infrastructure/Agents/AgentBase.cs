@@ -10,27 +10,11 @@ using Microsoft.SemanticKernel.Agents.AzureAI;
 namespace infrastructure.Agents
 {
 
-    public class AgentBase(Kernel kernel, IConfiguration configuration)
+    public class AgentBase(Kernel kernel, PersistentAgentsClient agentsClient)
     {
+       
         public (Agent, PersistentAgentsClient) GetAzureAgent(string agentId)
-        {
-            //DO NO USE THIS CODE IN PRODUCTION. USE RBAC INSTEAD FOR AUTHENTICATION
-            AIProjectClient projectClient = new(new Uri(configuration["AgentProjectEndpoint"]), new DefaultAzureCredential(
-                new DefaultAzureCredentialOptions
-                {
-                    ExcludeVisualStudioCredential = true,
-                    ExcludeEnvironmentCredential = true,
-                    ExcludeManagedIdentityCredential = true,
-                    ExcludeInteractiveBrowserCredential = false,
-                    ExcludeAzureCliCredential = false,
-                    ExcludeAzureDeveloperCliCredential = true,
-                    ExcludeAzurePowerShellCredential = true,
-                    ExcludeSharedTokenCacheCredential = true,
-                    ExcludeVisualStudioCodeCredential = true,
-                    ExcludeWorkloadIdentityCredential = true,
-
-                }));
-            PersistentAgentsClient agentsClient = projectClient.GetPersistentAgentsClient();
+        {           
             PersistentAgent definition = agentsClient.Administration.GetAgent(agentId);
             AzureAIAgent agent = new(definition, agentsClient)
             {
@@ -40,24 +24,7 @@ namespace infrastructure.Agents
         }
         public async Task UpdateAgent(string agentId, object schema)
         {
-            AIProjectClient projectClient = new(new Uri(configuration["AgentProjectEndpoint"]), new DefaultAzureCredential(
-                new DefaultAzureCredentialOptions
-                {
-                    ExcludeVisualStudioCredential = true,
-                    ExcludeEnvironmentCredential = true,
-                    ExcludeManagedIdentityCredential = true,
-                    ExcludeInteractiveBrowserCredential = false,
-                    ExcludeAzureCliCredential = false,
-                    ExcludeAzureDeveloperCliCredential = true,
-                    ExcludeAzurePowerShellCredential = true,
-                    ExcludeSharedTokenCacheCredential = true,
-                    ExcludeVisualStudioCodeCredential = true,
-                    ExcludeWorkloadIdentityCredential = true,
-
-                }));
-            PersistentAgentsClient agentsClient = projectClient.GetPersistentAgentsClient();
             await agentsClient.Administration.UpdateAgentAsync(agentId, responseFormat: BinaryData.FromObjectAsJson(schema));
         }
     }
-
 }
