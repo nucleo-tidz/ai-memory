@@ -19,13 +19,14 @@
             var mem0Provider = new Mem0Provider(httpClient, options: new()
             {
                 UserId = userName,
-            });
+            });       
             #region Update response schema if neeeded
             //await base.UpdateAgent(configuration["AgentId"], responseFormat);
             #endregion
             var agent = base.GetAzureAgent(configuration["AgentId"]);
             AgentThread thread = string.IsNullOrEmpty(threadId) ? new AzureAIAgentThread(agent.Item2):new AzureAIAgentThread(agent.Item2, threadId);
             #region Add Context Provider
+          
             thread.AIContextProviders.Add(mem0Provider);
             #endregion
             ChatMessageContent chatMessageContent = new(AuthorRole.User, input);
