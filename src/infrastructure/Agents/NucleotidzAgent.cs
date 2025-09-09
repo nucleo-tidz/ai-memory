@@ -10,24 +10,25 @@
     using Microsoft.SemanticKernel.Agents.AzureAI;
     using Microsoft.SemanticKernel.ChatCompletion;
     using Microsoft.SemanticKernel.Memory;
+    using model;
 
     internal class NucleotidzAgent(Kernel _kernel, IConfiguration configuration, IHttpClientFactory httpClientFactory, PersistentAgentsClient agentsClient) : AgentBase(_kernel, agentsClient), INucleotidzAgent
     {
-        public async Task<string> Execute(string input, string userName, string threadId)
+        public async Task<AgentResponse> Execute(string input, string userName, string threadId)
         {
             var httpClient = httpClientFactory.CreateClient("MemoryClient");
             var mem0Provider = new Mem0Provider(httpClient, options: new()
             {
                 UserId = userName,
-            });       
+            });
             #region Update response schema if neeeded
             //await base.UpdateAgent(configuration["AgentId"], responseFormat);
             #endregion
             var agent = base.GetAzureAgent(configuration["AgentId"]);
-            AgentThread thread = string.IsNullOrEmpty(threadId) ? new AzureAIAgentThread(agent.Item2):new AzureAIAgentThread(agent.Item2, threadId);
+            AgentThread thread = string.IsNullOrEmpty(threadId) ? new AzureAIAgentThread(agent.Item2) : new AzureAIAgentThread(agent.Item2, threadId);
             #region Add Context Provider
-          
-            thread.AIContextProviders.Add(mem0Provider);
+
+             thread.AIContextProviders.Add(mem0Provider);
             #endregion
             ChatMessageContent chatMessageContent = new(AuthorRole.User, input);
             string agentReply = string.Empty;
@@ -35,7 +36,7 @@
             {
                 agentReply = agentReply + response.Content;
             }
-            return agentReply;
+            return new AgentResponse { response = agentReply, threadId = thread.Id };
         }
     }
 }

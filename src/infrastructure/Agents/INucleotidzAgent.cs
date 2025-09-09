@@ -1,9 +1,10 @@
 ﻿namespace infrastructure.Agents
 {
+    using model;
     using System.Threading.Tasks;
 
     public interface INucleotidzAgent
     {
-        Task<string> Execute(string input, string userName, string threadId);
+        Task<AgentResponse> Execute(string input, string userName, string threadId);
     }
 }

@@ -9,7 +9,7 @@
 
     <PackageReference Include="Dapper" />
     <PackageReference Include="Microsoft.Azure.CognitiveServices.Vision.CustomVision.Prediction" />
-    <PackageReference Include="Microsoft.Data.SqlClient"/>
+    <PackageReference Include="Microsoft.Data.SqlClient" />
     <PackageReference Include="Microsoft.Extensions.AI" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
     <PackageReference Include="Microsoft.Extensions.Configuration" />
@@ -20,6 +20,9 @@
     <PackageReference Include="ModelContextProtocol" />
     <PackageReference Include="ModelContextProtocol.AspNetCore" />
 
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\model\model.csproj" />
   </ItemGroup>
 
 </Project>
